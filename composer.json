@@ -1,5 +1,5 @@
 {
-    "name": "gtntbt/yii2-mp-gtreetable",
+    "name": "grnrbt/yii2-mp-gtreetable",
     "description": "yii2-gtreetable is an extension of Yii 2 Framework, which is wrapper for bootstrap-gtreetable plug-in, on the other hand it provides functionality which allows to save the nodes states into database.",
     "keywords": ["yii2", "extension", "gtreetable", "tree", "materialized path"],
     "homepage": "https://github.com/grnrbt/yii2-mp-gtreetable",
