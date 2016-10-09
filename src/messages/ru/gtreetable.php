@@ -8,12 +8,12 @@
  */
 
 return [
-  'Position indicated by related ID is not exists!' => 'Позиция на которую ссылается ID не существует',
-  'Adding operation `{name}` failed!'               => 'Операция добавления `{name}` не выполнена!',
-  'Unsupported insert position!'                    => 'Неподдерживаемая позиция добавления!',
-  'Position is not exists!'                         => 'Позиция не существует!',
-  'Main element can`t be deleted!'                  => 'Основная категория не может быть удалена!',
-  'Deleting operation `{name}` failed!'             => 'Операция удаления `{name}` не выполнена!',
-  'Updating operation `{name}` failed!'             => 'Операция обновления `{name}` не выполнена!',
-  'Name'                                            => 'Название'
+    'Position indicated by related ID is not exists!' => 'Позиция на которую ссылается ID не существует',
+    'Adding operation `{name}` failed!' => 'Операция добавления `{name}` не выполнена!',
+    'Unsupported insert position!' => 'Неподдерживаемая позиция добавления!',
+    'Position is not exists!' => 'Позиция не существует!',
+    'Main element can`t be deleted!' => 'Основная категория не может быть удалена!',
+    'Deleting operation `{name}` failed!' => 'Операция удаления `{name}` не выполнена!',
+    'Updating operation `{name}` failed!' => 'Операция обновления `{name}` не выполнена!',
+    'Name' => 'Название',
 ];
