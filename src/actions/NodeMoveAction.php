@@ -1,10 +1,10 @@
 <?php
 
 /**
-* @link https://github.com/gilek/yii2-gtreetable
-* @copyright Copyright (c) 2015 Maciej Kłak
-* @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
-*/
+ * @link https://github.com/gilek/yii2-gtreetable
+ * @copyright Copyright (c) 2015 Maciej Kłak
+ * @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
+ */
 
 namespace grnrbt\yii2\gtreetable\actions;
 
@@ -16,9 +16,11 @@ use yii\helpers\Json;
 use yii\helpers\Html;
 use grnrbt\yii2\gtreetable\models\TreeModel;
 
-class NodeMoveAction extends ModifyAction {
+class NodeMoveAction extends ModifyAction
+{
 
-    public function run($id) {
+    public function run($id)
+    {
         $model = $this->getNodeById($id);
         $model->scenario = 'move';
         $model->load(Yii::$app->request->post(), '');
@@ -33,18 +35,18 @@ class NodeMoveAction extends ModifyAction {
 
         try {
             if (is_callable($this->beforeAction)) {
-                call_user_func_array($this->beforeAction,['model' => $model]);
-            }            
-            
-            $action = $this->getMoveAction($model);
-            if (!call_user_func(array($model, $action), $model->relatedNode)) {
-                throw new Exception(Yii::t('gtreetable', 'Moving operation `{name}` failed!', ['{name}' => Html::encode((string) $model)]));
+                call_user_func_array($this->beforeAction, ['model' => $model]);
             }
-            
+
+            $action = $this->getMoveAction($model);
+            if (!(call_user_func(array($model, $action), $model->relatedNode) && $model->save(false))) {
+                throw new Exception(Yii::t('gtreetable', 'Moving operation `{name}` failed!', ['{name}' => Html::encode((string)$model)]));
+            }
+
             if (is_callable($this->afterAction)) {
-                call_user_func_array($this->afterAction,['model' => $model]);
-            }               
-            
+                call_user_func_array($this->afterAction, ['model' => $model]);
+            }
+
             echo Json::encode([
                 'id' => $model->getPrimaryKey(),
                 'name' => $model->getName(),
@@ -56,7 +58,8 @@ class NodeMoveAction extends ModifyAction {
         }
     }
 
-    protected function getMoveAction($model) {
+    protected function getMoveAction($model)
+    {
         if ($model->relatedNode->isRoot() && $model->position !== TreeModel::POSITION_LAST_CHILD) {
             return 'makeRoot';
         } else if ($model->position === TreeModel::POSITION_BEFORE) {

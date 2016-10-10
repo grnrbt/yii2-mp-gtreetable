@@ -8,9 +8,10 @@
 
 namespace grnrbt\yii2\gtreetable\actions;
 
-abstract class ModifyAction extends BaseAction {
-    
+abstract class ModifyAction extends BaseAction
+{
+
     public $beforeAction;
-    
+
     public $afterAction;
 }

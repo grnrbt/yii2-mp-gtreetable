@@ -1,14 +1,15 @@
 <?php
 
 /**
-* @link https://github.com/gilek/yii2-gtreetable
-* @copyright Copyright (c) 2015 Maciej Kłak
-* @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
-*/
+ * @link https://github.com/gilek/yii2-gtreetable
+ * @copyright Copyright (c) 2015 Maciej Kłak
+ * @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
+ */
 
 namespace grnrbt\yii2\gtreetable\assets;
 
-class BrowserAsset extends \yii\web\AssetBundle {
+class BrowserAsset extends \yii\web\AssetBundle
+{
 
     /**
      * @inheritdoc
@@ -21,9 +22,9 @@ class BrowserAsset extends \yii\web\AssetBundle {
     public $js = [
         'jquery.browser.min.js'
     ];
-    
+
     public $depends = [
         'yii\web\JqueryAsset',
-    ];    
+    ];
 
 }

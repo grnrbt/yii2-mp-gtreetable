@@ -1,10 +1,10 @@
 <?php
 
 /**
-* @link https://github.com/gilek/yii2-gtreetable
-* @copyright Copyright (c) 2015 Maciej Kłak
-* @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
-*/
+ * @link https://github.com/gilek/yii2-gtreetable
+ * @copyright Copyright (c) 2015 Maciej Kłak
+ * @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
+ */
 
 namespace grnrbt\yii2\gtreetable;
 
@@ -15,7 +15,8 @@ use yii\helpers\ArrayHelper;
 use yii\web\AssetBundle;
 use grnrbt\yii2\gtreetable\assets\Asset;
 
-class Widget extends \yii\base\Widget {
+class Widget extends \yii\base\Widget
+{
 
     public $options = [];
     public $htmlOptions = [];
@@ -26,7 +27,8 @@ class Widget extends \yii\base\Widget {
     /**
      * @inheritdoc
      */
-    public function init() {
+    public function init()
+    {
         $this->registerTranslations();
         if ($this->columnName === null) {
             $this->columnName = Yii::t('gtreetable', 'Name');
@@ -36,7 +38,8 @@ class Widget extends \yii\base\Widget {
     /**
      * @inheritdoc
      */
-    public function run() {
+    public function run()
+    {
 
         $output = [];
         if ($this->selector === null) {
@@ -64,7 +67,8 @@ class Widget extends \yii\base\Widget {
     /**
      * Register widget asset.
      */
-    public function registerClientScript() {
+    public function registerClientScript()
+    {
         $view = $this->getView();
         $assetBundle = $this->assetBundle instanceof AssetBundle ? $this->assetBundle : Asset::register($view);
 
@@ -78,7 +82,8 @@ class Widget extends \yii\base\Widget {
         $view->registerJs("jQuery('$selector').gtreetable($options);");
     }
 
-    public function registerTranslations() {
+    public function registerTranslations()
+    {
         if (!isset(Yii::$app->i18n->translations['gtreetable'])) {
             Yii::$app->i18n->translations['gtreetable'] = [
                 'class' => 'yii\i18n\PhpMessageSource',

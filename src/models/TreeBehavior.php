@@ -7,8 +7,6 @@ namespace grnrbt\yii2\gtreetable\models;
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveRecord;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
 use yii\validators\Validator;
 
 class TreeBehavior extends Behavior
@@ -81,7 +79,7 @@ class TreeBehavior extends Behavior
             if ($rule instanceof Validator) {
                 $validators->append($rule);
             } elseif (is_array($rule) && isset($rule[0], $rule[1])) { // attributes, validator type
-                $validator = Validator::createValidator($rule[1], $owner, (array) $rule[0], array_slice($rule, 2));
+                $validator = Validator::createValidator($rule[1], $owner, (array)$rule[0], array_slice($rule, 2));
                 $validators->append($validator);
             } else {
                 throw new InvalidConfigException('Invalid validation rule: a rule must specify both attribute names and validator type.');
@@ -89,11 +87,13 @@ class TreeBehavior extends Behavior
         }
     }
 
-    public function getRelatedNode() {
+    public function getRelatedNode()
+    {
         return $this->owner->hasOne(get_class($this->owner), ['id' => 'related']);
     }
 
-    public function setName($nodeName) {
+    public function setName($nodeName)
+    {
         $this->owner->{$this->nameAttribute} = $nodeName;
     }
 

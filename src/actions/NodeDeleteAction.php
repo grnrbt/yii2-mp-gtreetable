@@ -1,10 +1,10 @@
 <?php
 
 /**
-* @link https://github.com/gilek/yii2-gtreetable
-* @copyright Copyright (c) 2015 Maciej Kłak
-* @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
-*/
+ * @link https://github.com/gilek/yii2-gtreetable
+ * @copyright Copyright (c) 2015 Maciej Kłak
+ * @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
+ */
 
 namespace grnrbt\yii2\gtreetable\actions;
 
@@ -13,29 +13,31 @@ use yii\web\HttpException;
 use yii\db\Exception;
 use yii\helpers\Html;
 
-class NodeDeleteAction extends ModifyAction {
+class NodeDeleteAction extends ModifyAction
+{
 
-    public function run($id) {
+    public function run($id)
+    {
         $model = $this->getNodeById($id);
 
-        if ($model->isRoot() && (integer) $model->find()->roots()->count() === 1) {
+        if ($model->isRoot() && (integer)$model->find()->roots()->count() === 1) {
             throw new HttpException(500, Yii::t('gtreetable', 'Main element can`t be deleted!'));
         }
 
         $trans = $model->getDB()->beginTransaction();
         try {
             if (is_callable($this->beforeAction)) {
-                call_user_func_array($this->beforeAction,['model' => $model]);
+                call_user_func_array($this->beforeAction, ['model' => $model]);
             }
-            
-            if (!$model->deleteWithChildren()) {
-                throw new Exception(Yii::t('gtreetable', 'Deleting operation `{name}` failed!', ['{name}' => Html::encode((string) $model)]));
+
+            if (!$model->delete()) {
+                throw new Exception(Yii::t('gtreetable', 'Deleting operation `{name}` failed!', ['{name}' => Html::encode((string)$model)]));
             }
-            
+
             if (is_callable($this->afterAction)) {
-                call_user_func_array($this->afterAction,['model' => $model]);
-            }          
-            
+                call_user_func_array($this->afterAction, ['model' => $model]);
+            }
+
             $trans->commit();
             return true;
         } catch (\Exception $e) {

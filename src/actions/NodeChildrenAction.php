@@ -1,10 +1,10 @@
 <?php
 
 /**
-* @link https://github.com/gilek/yii2-gtreetable
-* @copyright Copyright (c) 2015 Maciej Kłak
-* @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
-*/
+ * @link https://github.com/gilek/yii2-gtreetable
+ * @copyright Copyright (c) 2015 Maciej Kłak
+ * @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
+ */
 
 namespace grnrbt\yii2\gtreetable\actions;
 
@@ -14,9 +14,11 @@ use yii\web\NotFoundHttpException;
 use yii\helpers\Json;
 use yii\validators\NumberValidator;
 
-class NodeChildrenAction extends BaseAction {
+class NodeChildrenAction extends BaseAction
+{
 
-    public function run($id) {
+    public function run($id)
+    {
         $validator = new NumberValidator();
         $validator->integerOnly = true;
         if (!$validator->validate($id, $error)) {
@@ -24,7 +26,7 @@ class NodeChildrenAction extends BaseAction {
         }
 
         $query = (new $this->treeModelName)->find();
-        
+
         $nodes = [];
         if ($id == 0) {
             $nodes = $query->roots()->all();

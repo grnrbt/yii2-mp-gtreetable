@@ -39,7 +39,7 @@ class NodeCreateAction extends ModifyAction
             }
 
             $action = $isRootNode ? 'makeRoot' : $this->getInsertAction($model);
-            if (!call_user_func(array($model, $action), $model->relatedNode)) {
+            if (!(call_user_func(array($model, $action), $model->relatedNode) && $model->save(false))) {
                 throw new Exception(Yii::t('gtreetable', 'Adding operation `{name}` failed!', ['{name}' => Html::encode((string)$model)]));
             }
 
