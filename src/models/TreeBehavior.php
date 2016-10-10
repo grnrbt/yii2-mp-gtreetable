@@ -5,7 +5,11 @@ namespace grnrbt\yii2\gtreetable\models;
 
 
 use yii\base\Behavior;
+use yii\base\InvalidConfigException;
+use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\validators\Validator;
 
 class TreeBehavior extends Behavior
 {
@@ -14,19 +18,21 @@ class TreeBehavior extends Behavior
     const POSITION_FIRST_CHILD = 'firstChild';
     const POSITION_LAST_CHILD = 'lastChild';
 
+    public $nodeName;
     public $nameAttribute = 'title';
 
     /**
      * @var int immidiate parent
      */
-    public $parent;
-    public $position;
+    public $nodeParent;
+    public $insertPosition;
     /**
      * @var int related element, we insert new alement before, after or into that element
      */
     public $related;
 
-    public function getPositions() {
+    public function getPositions()
+    {
         return [
             self::POSITION_BEFORE,
             self::POSITION_AFTER,
@@ -35,40 +41,65 @@ class TreeBehavior extends Behavior
         ];
     }
 
+    public function attach($owner)
+    {
+        $this->createValidators($owner);
+
+        parent::attach($owner);
+    }
+
     /**
      * @inheritdoc
      */
-    public function rules() {
+    public function events()
+    {
         return [
-            ['parent', 'required'],
-            ['related', 'required'],
-            ['position', 'required'],
-            ['position', 'in', 'range' => $this->getPositions()],
-            [$this->nameAttribute, 'required'],
-            [$this->nameAttribute, 'string', 'max' => 128],
-            [$this->nameAttribute, 'filter', 'filter' => function($value) {
-                return Html::encode($value);
-            }, 'skipOnError' => true]
+            ActiveRecord::EVENT_BEFORE_VALIDATE => 'beforeValidate',
         ];
     }
 
-    function scenarios() {
-        return [
-            'create' => ['parent', 'related', 'position', $this->nameAttribute],
-            'update' => [$this->nameAttribute],
-            'move' => ['related', 'position'],
-            self::SCENARIO_DEFAULT => [],
+    public function beforeValidate($event)
+    {
+        $this->owner->{$this->nameAttribute} = $this->nodeName;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    private function createValidators($owner)
+    {
+        $rules = [
+            ['nodeName', 'required', 'on' => ['create', 'move', 'update']],
+            ['nodeParent', 'required', 'on' => ['create']],
+            ['related', 'required', 'on' => ['create', 'move']],
+            ['insertPosition', 'required', 'on' => ['create', 'move']],
+            ['insertPosition', 'in', 'range' => $this->getPositions()],
         ];
+
+        $validators = $owner->validators;
+        foreach ($rules as $rule) {
+            if ($rule instanceof Validator) {
+                $validators->append($rule);
+            } elseif (is_array($rule) && isset($rule[0], $rule[1])) { // attributes, validator type
+                $validator = Validator::createValidator($rule[1], $owner, (array) $rule[0], array_slice($rule, 2));
+                $validators->append($validator);
+            } else {
+                throw new InvalidConfigException('Invalid validation rule: a rule must specify both attribute names and validator type.');
+            }
+        }
+    }
+
+    public function getRelatedNode() {
+        return $this->owner->hasOne(get_class($this->owner), ['id' => 'related']);
+    }
+
+    public function setName($nodeName) {
+        $this->owner->{$this->nameAttribute} = $nodeName;
     }
 
     public function getName()
     {
         return $this->owner->{$this->nameAttribute};
-    }
-
-    public function getDepth()
-    {
-        return $this->owner->getLevel();
     }
 
     /**

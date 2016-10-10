@@ -50,9 +50,9 @@ $defaultOptions = [
             type: 'POST',
             url: !oNode.isSaved() ? '" . Url::to([$routes['nodeCreate']]) . "' : URI('" . Url::to([$routes['nodeUpdate']]) . "').addSearch({'id':oNode.getId()}).toString(),
             data: {
-                parent: oNode.getParent(),
-                name: oNode.getName(),
-                position: oNode.getInsertPosition(),
+                nodeParent: oNode.getParent(),
+                nodeName: oNode.getName(),
+                insertPosition: oNode.getInsertPosition(),
                 related: oNode.getRelatedNodeId()
             },
             dataType: 'json',
@@ -77,7 +77,7 @@ $defaultOptions = [
             url: URI('" . Url::to([$routes['nodeMove']]) . "').addSearch({'id':oSource.getId()}).toString(),
             data: {
                 related: oDestination.getId(),
-                position: position
+                insertPosition: position
             },
             dataType: 'json',
             error: function(XMLHttpRequest) {

@@ -1,9 +1,9 @@
 <?php
 /**
-* @link https://github.com/gilek/yii2-gtreetable
-* @copyright Copyright (c) 2015 Maciej Kłak
-* @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
-*/
+ * @link https://github.com/gilek/yii2-gtreetable
+ * @copyright Copyright (c) 2015 Maciej Kłak
+ * @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
+ */
 
 namespace grnrbt\yii2\gtreetable\actions;
 
@@ -15,9 +15,11 @@ use yii\helpers\Json;
 use yii\helpers\Html;
 use grnrbt\yii2\gtreetable\models\TreeModel;
 
-class NodeCreateAction extends ModifyAction {
+class NodeCreateAction extends ModifyAction
+{
 
-    public function run() {
+    public function run()
+    {
         $model = new $this->treeModelName();
         $model->scenario = 'create';
         $model->load(Yii::$app->request->post(), '');
@@ -26,25 +28,25 @@ class NodeCreateAction extends ModifyAction {
             throw new HttpException(500, current(current($model->getErrors())));
         }
 
-        $isRootNode = !(integer) $model->parent > 0;
+        $isRootNode = !(integer)$model->parent > 0;
         if (!$isRootNode && !($model->relatedNode instanceof $this->treeModelName)) {
             throw new NotFoundHttpException(Yii::t('gtreetable', 'Position indicated by related ID is not exists!'));
         }
 
         try {
             if (is_callable($this->beforeAction)) {
-                call_user_func_array($this->beforeAction,['model' => $model]);
+                call_user_func_array($this->beforeAction, ['model' => $model]);
             }
-            
+
             $action = $isRootNode ? 'makeRoot' : $this->getInsertAction($model);
             if (!call_user_func(array($model, $action), $model->relatedNode)) {
-                throw new Exception(Yii::t('gtreetable', 'Adding operation `{name}` failed!', ['{name}' => Html::encode((string) $model)]));
+                throw new Exception(Yii::t('gtreetable', 'Adding operation `{name}` failed!', ['{name}' => Html::encode((string)$model)]));
             }
-            
+
             if (is_callable($this->afterAction)) {
-                call_user_func_array($this->afterAction,['model' => $model]);
-            }             
-            
+                call_user_func_array($this->afterAction, ['model' => $model]);
+            }
+
             echo Json::encode([
                 'id' => $model->getPrimaryKey(),
                 'name' => $model->getName(),
@@ -56,7 +58,8 @@ class NodeCreateAction extends ModifyAction {
         }
     }
 
-    protected function getInsertAction($model) {
+    protected function getInsertAction($model)
+    {
         if ($model->position === TreeModel::POSITION_BEFORE) {
             return 'insertBefore';
         } else if ($model->position === TreeModel::POSITION_AFTER) {
