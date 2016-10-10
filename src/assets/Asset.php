@@ -32,12 +32,17 @@ class Asset extends \yii\web\AssetBundle {
         $this->css[] = 'bootstrap-gtreetable' . (YII_ENV_DEV ? '' : $this->minSuffix) . '.css';
 
         if ($this->language !== null) {
-            $langFile = 'languages/bootstrap-gtreetable.' . $this->language . (YII_ENV_DEV ? '' : '.' . $this->minSuffix) . '.js';
+            if($this->language != 'zh-CN') { // dirty hack for incorrect lang naming in bootstrap-gtreetable
+                $this->language = substr($this->language, 0, 2);
+            }
+
+            $langFile = 'languages/bootstrap-gtreetable.' . $this->language . (YII_ENV_DEV ? '' : $this->minSuffix) . '.js';
+//            var_dump(file_exists(Yii::getAlias($this->sourcePath . DIRECTORY_SEPARATOR . $langFile))); die;
             if (file_exists(Yii::getAlias($this->sourcePath . DIRECTORY_SEPARATOR . $langFile))) {
                 $this->js[] = $langFile;
             }
         }
-
+//var_dump($this->js); die;
         parent::registerAssetFiles($view);
     }
 

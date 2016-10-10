@@ -1,10 +1,10 @@
 <?php
 
 /**
-* @link https://github.com/gilek/yii2-gtreetable
-* @copyright Copyright (c) 2015 Maciej Kłak
-* @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
-*/
+ * @link https://github.com/gilek/yii2-gtreetable
+ * @copyright Copyright (c) 2015 Maciej Kłak
+ * @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
+ */
 
 use grnrbt\yii2\gtreetable\Widget;
 use grnrbt\yii2\gtreetable\assets\UrlAsset;
@@ -24,31 +24,31 @@ if (!isset($routes)) {
     $routes = [];
 }
 
-$controller = (!isset($controller)) ? '' : $controller.'/';
+$controller = (!isset($controller)) ? '' : $controller . '/';
 
 $routes = array_merge([
-    'nodeChildren' => $controller.'nodeChildren',
-    'nodeCreate' => $controller.'nodeCreate',
-    'nodeUpdate' => $controller.'nodeUpdate',
-    'nodeDelete' => $controller.'nodeDelete',
-    'nodeMove' => $controller.'nodeMove'
-],$routes);
+    'nodeChildren' => $controller . 'nodeChildren',
+    'nodeCreate' => $controller . 'nodeCreate',
+    'nodeUpdate' => $controller . 'nodeUpdate',
+    'nodeDelete' => $controller . 'nodeDelete',
+    'nodeMove' => $controller . 'nodeMove'
+], $routes);
 
 $defaultOptions = [
     'source' => new JsExpression("function (id) {
         return {
             type: 'GET',
-            url: URI('".Url::to([$routes['nodeChildren']])."').addSearch({'id':id}).toString(),
+            url: URI('" . Url::to([$routes['nodeChildren']]) . "').addSearch({'id':id}).toString(),
             dataType: 'json',
             error: function(XMLHttpRequest) {
-                alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
             }
         }; 
     }"),
     'onSave' => new JsExpression("function (oNode) {
         return {
             type: 'POST',
-            url: !oNode.isSaved() ? '".Url::to([$routes['nodeCreate']])."' : URI('".Url::to([$routes['nodeUpdate']])."').addSearch({'id':oNode.getId()}).toString(),
+            url: !oNode.isSaved() ? '" . Url::to([$routes['nodeCreate']]) . "' : URI('" . Url::to([$routes['nodeUpdate']]) . "').addSearch({'id':oNode.getId()}).toString(),
             data: {
                 parent: oNode.getParent(),
                 name: oNode.getName(),
@@ -57,31 +57,31 @@ $defaultOptions = [
             },
             dataType: 'json',
             error: function(XMLHttpRequest) {
-                alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
             }
         };        
     }"),
     'onDelete' => new JsExpression("function(oNode) {
         return {
             type: 'POST',
-            url: URI('".Url::to([$routes['nodeDelete']])."').addSearch({'id':oNode.getId()}).toString(),
+            url: URI('" . Url::to([$routes['nodeDelete']]) . "').addSearch({'id':oNode.getId()}).toString(),
             dataType: 'json',
             error: function(XMLHttpRequest) {
-                alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
             }
         };        
     }"),
     'onMove' => new JsExpression("function(oSource, oDestination, position) {
         return {
             type: 'POST',
-            url: URI('".Url::to([$routes['nodeMove']])."').addSearch({'id':oSource.getId()}).toString(),
+            url: URI('" . Url::to([$routes['nodeMove']]) . "').addSearch({'id':oSource.getId()}).toString(),
             data: {
                 related: oDestination.getId(),
                 position: position
             },
             dataType: 'json',
             error: function(XMLHttpRequest) {
-                alert(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
             }
         };        
     }"),
@@ -96,9 +96,9 @@ if (array_key_exists('draggable', $options) && $options['draggable'] === true) {
 
 $params = [];
 $reflector = new ReflectionClass(Widget::className());
-foreach($reflector->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+foreach ($reflector->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
     $name = $property->name;
-    
+
     if (isset(${$name})) {
         $params[$name] = ${$name};
     }

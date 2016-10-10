@@ -48,7 +48,7 @@ class NodeMoveAction extends ModifyAction {
             echo Json::encode([
                 'id' => $model->getPrimaryKey(),
                 'name' => $model->getName(),
-                'level' => $model->getDepth(),
+                'level' => $model->getLevel(),
                 'type' => $model->getType()
             ]);
         } catch (\Exception $e) {

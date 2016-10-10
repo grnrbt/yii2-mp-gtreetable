@@ -38,7 +38,7 @@ class Widget extends \yii\base\Widget {
      */
     public function run() {
 
-        $output = '';
+        $output = [];
         if ($this->selector === null) {
             $this->htmlOptions = ArrayHelper::merge([
                 'id' => $this->getId()
@@ -47,18 +47,18 @@ class Widget extends \yii\base\Widget {
             Html::addCssClass($this->htmlOptions, 'gtreetable');
             Html::addCssClass($this->htmlOptions, 'table');
 
-            $output = Html::beginTag('table', $this->htmlOptions);
-            $output .= Html::beginTag('thead');
-            $output .= Html::beginTag('tr');
-            $output .= Html::beginTag('th', array('width' => '100%'));
-            $output .= $this->columnName;
-            $output .= Html::endTag('th');
-            $output .= Html::endTag('tr');
-            $output .= Html::endTag('thead');
-            $output .= Html::endTag('table');
+            $output[] = Html::beginTag('table', $this->htmlOptions);
+            $output[] = Html::beginTag('thead');
+            $output[] = Html::beginTag('tr');
+            $output[] = Html::beginTag('th', array('width' => '100%'));
+            $output[] = $this->columnName;
+            $output[] = Html::endTag('th');
+            $output[] = Html::endTag('tr');
+            $output[] = Html::endTag('thead');
+            $output[] = Html::endTag('table');
         }
         $this->registerClientScript();
-        return $output;
+        return implode('', $output);
     }
 
     /**
@@ -82,7 +82,7 @@ class Widget extends \yii\base\Widget {
         if (!isset(Yii::$app->i18n->translations['gtreetable'])) {
             Yii::$app->i18n->translations['gtreetable'] = [
                 'class' => 'yii\i18n\PhpMessageSource',
-                'basePath' => '@grnrbt/mp-gtreetable/messages',
+                'basePath' => '@grnrbt/yii2/gtreetable/messages',
             ];
         }
     }

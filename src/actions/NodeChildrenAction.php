@@ -33,14 +33,14 @@ class NodeChildrenAction extends BaseAction {
             if ($parent === null) {
                 throw new NotFoundHttpException(Yii::t('gtreetable', 'Position indicated by parent ID is not exists!'));
             }
-            $nodes = $parent->children(1)->all();
+            $nodes = $parent->getChildren()->all();
         }
         $result = [];
         foreach ($nodes as $node) {
             $result[] = [
                 'id' => $node->getPrimaryKey(),
                 'name' => $node->getName(),
-                'level' => $node->getDepth(),
+                'level' => $node->getLevel(),
                 'type' => $node->getType()
             ];
         }
