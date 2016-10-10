@@ -8,13 +8,13 @@
 
 namespace grnrbt\yii2\gtreetable\actions;
 
+use grnrbt\yii2\gtreetable\models\TreeBehavior;
 use Yii;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\db\Exception;
 use yii\helpers\Json;
 use yii\helpers\Html;
-use grnrbt\yii2\gtreetable\models\TreeModel;
 
 class NodeMoveAction extends ModifyAction
 {
@@ -60,13 +60,13 @@ class NodeMoveAction extends ModifyAction
 
     protected function getMoveAction($model)
     {
-        if ($model->relatedNode->isRoot() && $model->position !== TreeModel::POSITION_LAST_CHILD) {
+        if ($model->relatedNode->isRoot() && $model->insertPosition !== TreeBehavior::POSITION_LAST_CHILD) {
             return 'makeRoot';
-        } else if ($model->position === TreeModel::POSITION_BEFORE) {
+        } else if ($model->insertPosition === TreeBehavior::POSITION_BEFORE) {
             return 'insertBefore';
-        } else if ($model->position === TreeModel::POSITION_AFTER) {
+        } else if ($model->insertPosition === TreeBehavior::POSITION_AFTER) {
             return 'insertAfter';
-        } else if ($model->position === TreeModel::POSITION_LAST_CHILD) {
+        } else if ($model->insertPosition === TreeBehavior::POSITION_LAST_CHILD) {
             return 'appendTo';
         } else {
             throw new HttpException(500, Yii::t('gtreetable', 'Unsupported move position!'));
