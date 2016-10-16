@@ -9,105 +9,37 @@
 
 use grnrbt\yii2\gtreetable\GTreeTableWidget;
 use grnrbt\yii2\gtreetable\assets\UrlAsset;
-use grnrbt\yii2\gtreetable\assets\BrowserAsset;
-use yii\jui\JuiAsset;
-use yii\helpers\Url;
-use yii\web\JsExpression;
+use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 
 UrlAsset::register($this);
+
+/* @var GTreeTableWidget $context */
+$context = $this->context;
 
 if (isset($title)) {
     $this->title = $title;
 }
 
-if (!isset($routes)) {
-    $routes = [];
+if ($context->selector === null) {
+    $output = [];
+
+    $context->htmlOptions = ArrayHelper::merge([
+        'id' => $context->getId()
+    ], $context->htmlOptions);
+
+    Html::addCssClass($context->htmlOptions, 'gtreetable');
+    Html::addCssClass($context->htmlOptions, 'table');
+
+    $output[] = Html::beginTag('table', $context->htmlOptions);
+    $output[] = Html::beginTag('thead');
+    $output[] = Html::beginTag('tr');
+    $output[] = Html::beginTag('th', array('width' => '100%'));
+    $output[] = $context->columnName;
+    $output[] = Html::endTag('th');
+    $output[] = Html::endTag('tr');
+    $output[] = Html::endTag('thead');
+    $output[] = Html::endTag('table');
+
+    echo implode('', $output);
 }
-
-$controller = (!isset($controller)) ? '' : $controller . '/';
-
-$routes = array_merge([
-    'nodeChildren' => $controller . 'nodeChildren',
-    'nodeCreate' => $controller . 'nodeCreate',
-    'nodeUpdate' => $controller . 'nodeUpdate',
-    'nodeDelete' => $controller . 'nodeDelete',
-    'nodeMove' => $controller . 'nodeMove'
-], $routes);
-
-$defaultOptions = [
-    'source' => new JsExpression("function (id) {
-        return {
-            type: 'GET',
-            url: URI('" . Url::to([$routes['nodeChildren']]) . "').addSearch({'id':id}).toString(),
-            dataType: 'json',
-            error: function(XMLHttpRequest) {
-                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
-            }
-        }; 
-    }"),
-    'onSave' => new JsExpression("function (oNode) {
-        return {
-            type: 'POST',
-            url: !oNode.isSaved() ? '" . Url::to([$routes['nodeCreate']]) . "' : URI('" . Url::to([$routes['nodeUpdate']]) . "').addSearch({'id':oNode.getId()}).toString(),
-            data: {
-                nodeParent: oNode.getParent(),
-                nodeName: oNode.getName(),
-                insertPosition: oNode.getInsertPosition(),
-                related: oNode.getRelatedNodeId()
-            },
-            dataType: 'json',
-            error: function(XMLHttpRequest) {
-                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
-            }
-        };        
-    }"),
-    'onDelete' => new JsExpression("function(oNode) {
-        return {
-            type: 'POST',
-            url: URI('" . Url::to([$routes['nodeDelete']]) . "').addSearch({'id':oNode.getId()}).toString(),
-            dataType: 'json',
-            error: function(XMLHttpRequest) {
-                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
-            }
-        };        
-    }"),
-    'onMove' => new JsExpression("function(oSource, oDestination, position) {
-        return {
-            type: 'POST',
-            url: URI('" . Url::to([$routes['nodeMove']]) . "').addSearch({'id':oSource.getId()}).toString(),
-            data: {
-                related: oDestination.getId(),
-                insertPosition: position
-            },
-            dataType: 'json',
-            error: function(XMLHttpRequest) {
-                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
-            }
-        };        
-    }"),
-    'language' => Yii::$app->language,
-];
-
-if(isset($link)) {
-    $defaultOptions['onSelect'] = new JsExpression("function (oNode) {
-        window.location.href = '". $link ."' + oNode.getId();
-    }");
-}
-
-$options = !isset($options) ? $defaultOptions : ArrayHelper::merge($defaultOptions, $options);
-if (array_key_exists('draggable', $options) && $options['draggable'] === true) {
-    BrowserAsset::register($this);
-    JuiAsset::register($this);
-}
-
-$params = [];
-$reflector = new ReflectionClass(GTreeTableWidget::className());
-foreach ($reflector->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-    $name = $property->name;
-
-    if (isset(${$name})) {
-        $params[$name] = ${$name};
-    }
-}
-echo GTreeTableWidget::widget($params);

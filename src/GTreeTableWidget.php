@@ -9,14 +9,19 @@
 
 namespace grnrbt\yii2\gtreetable;
 
+use grnrbt\yii2\gtreetable\assets\BrowserAsset;
 use Yii;
+use yii\base\Widget;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
+use yii\jui\JuiAsset;
 use yii\web\AssetBundle;
 use grnrbt\yii2\gtreetable\assets\Asset;
+use yii\web\JsExpression;
 
-class GTreeTableWidget extends \yii\base\Widget
+class GTreeTableWidget extends Widget
 {
 
     public $options = [];
@@ -24,6 +29,7 @@ class GTreeTableWidget extends \yii\base\Widget
     public $selector;
     public $columnName;
     public $assetBundle;
+    public $link;
 
     /**
      * @inheritdoc
@@ -34,6 +40,82 @@ class GTreeTableWidget extends \yii\base\Widget
         if ($this->columnName === null) {
             $this->columnName = Yii::t('gtreetable', 'Name');
         }
+
+        if (!isset($routes)) {
+            $routes = [];
+        }
+
+        $controller = (!isset($controller)) ? '' : $controller . '/';
+
+        $routes = array_merge([
+            'nodeChildren' => $controller . 'nodeChildren',
+            'nodeCreate' => $controller . 'nodeCreate',
+            'nodeUpdate' => $controller . 'nodeUpdate',
+            'nodeDelete' => $controller . 'nodeDelete',
+            'nodeMove' => $controller . 'nodeMove'
+        ], $routes);
+
+        $defaultOptions = [
+            'source' => new JsExpression("function (id) {
+        return {
+            type: 'GET',
+            url: URI('" . Url::to([$routes['nodeChildren']]) . "').addSearch({'id':id}).toString(),
+            dataType: 'json',
+            error: function(XMLHttpRequest) {
+                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+            }
+        }; 
+    }"),
+            'onSave' => new JsExpression("function (oNode) {
+        return {
+            type: 'POST',
+            url: !oNode.isSaved() ? '" . Url::to([$routes['nodeCreate']]) . "' : URI('" . Url::to([$routes['nodeUpdate']]) . "').addSearch({'id':oNode.getId()}).toString(),
+            data: {
+                nodeParent: oNode.getParent(),
+                nodeName: oNode.getName(),
+                insertPosition: oNode.getInsertPosition(),
+                related: oNode.getRelatedNodeId()
+            },
+            dataType: 'json',
+            error: function(XMLHttpRequest) {
+                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+            }
+        };        
+    }"),
+            'onDelete' => new JsExpression("function(oNode) {
+        return {
+            type: 'POST',
+            url: URI('" . Url::to([$routes['nodeDelete']]) . "').addSearch({'id':oNode.getId()}).toString(),
+            dataType: 'json',
+            error: function(XMLHttpRequest) {
+                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+            }
+        };        
+    }"),
+            'onMove' => new JsExpression("function(oSource, oDestination, position) {
+        return {
+            type: 'POST',
+            url: URI('" . Url::to([$routes['nodeMove']]) . "').addSearch({'id':oSource.getId()}).toString(),
+            data: {
+                related: oDestination.getId(),
+                insertPosition: position
+            },
+            dataType: 'json',
+            error: function(XMLHttpRequest) {
+                console.log(XMLHttpRequest.status+': '+XMLHttpRequest.responseText);
+            }
+        };        
+    }"),
+            'language' => Yii::$app->language,
+        ];
+
+        if($this->link) {
+            $defaultOptions['onSelect'] = new JsExpression("function (oNode) {
+        window.location.href = '". $this->link ."' + oNode.getId();
+    }");
+        }
+
+        $this->options = !($this->options) ? $defaultOptions : ArrayHelper::merge($defaultOptions, $this->options);
     }
 
     /**
@@ -41,28 +123,8 @@ class GTreeTableWidget extends \yii\base\Widget
      */
     public function run()
     {
-
-        $output = [];
-        if ($this->selector === null) {
-            $this->htmlOptions = ArrayHelper::merge([
-                'id' => $this->getId()
-            ], $this->htmlOptions);
-
-            Html::addCssClass($this->htmlOptions, 'gtreetable');
-            Html::addCssClass($this->htmlOptions, 'table');
-
-            $output[] = Html::beginTag('table', $this->htmlOptions);
-            $output[] = Html::beginTag('thead');
-            $output[] = Html::beginTag('tr');
-            $output[] = Html::beginTag('th', array('width' => '100%'));
-            $output[] = $this->columnName;
-            $output[] = Html::endTag('th');
-            $output[] = Html::endTag('tr');
-            $output[] = Html::endTag('thead');
-            $output[] = Html::endTag('table');
-        }
         $this->registerClientScript();
-        return implode('', $output);
+        return $this->render('widget');
     }
 
     /**
@@ -77,10 +139,15 @@ class GTreeTableWidget extends \yii\base\Widget
             $assetBundle->language = $this->options['language'];
         }
 
-        $selector = $this->selector === null ? '#' . $this->htmlOptions['id'] : $this->selector;
+        $selector = $this->selector === null ? '#' . $this->getId() : $this->selector;
         $options = Json::encode($this->options);
 
         $view->registerJs("jQuery('$selector').gtreetable($options);");
+
+        if (array_key_exists('draggable', $this->options) && $this->options['draggable'] === true) {
+            BrowserAsset::register($this->view);
+            JuiAsset::register($this->view);
+        }
     }
 
     public function registerTranslations()
