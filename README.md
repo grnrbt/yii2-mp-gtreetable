@@ -20,3 +20,14 @@ or add following line in `require` section of `composer.json` file.
 ## Minimal configuration<a name="minimal-configuration"></a>
 
 TODO 
+
+```
+    echo \grnrbt\yii2\gtreetable\GTreeTableWidget::widget([
+        'options' => [
+            'language' => 'ru',
+            // 'manyroots' => true,
+            'draggable' => true,
+        ],
+        'link' => '/article/update?id=',
+    ]);
+```
