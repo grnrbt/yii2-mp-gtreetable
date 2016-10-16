@@ -19,4 +19,4 @@ or add following line in `require` section of `composer.json` file.
 
 ## Minimal configuration<a name="minimal-configuration"></a>
 
-TODO
+TODO 

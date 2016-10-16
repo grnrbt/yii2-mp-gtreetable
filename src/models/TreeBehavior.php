@@ -58,7 +58,9 @@ class TreeBehavior extends Behavior
 
     public function beforeValidate($event)
     {
-        $this->owner->{$this->nameAttribute} = $this->nodeName;
+        if($this->nodeName) {
+            $this->owner->{$this->nameAttribute} = $this->nodeName;
+        }
     }
 
     /**
@@ -67,7 +69,7 @@ class TreeBehavior extends Behavior
     private function createValidators($owner)
     {
         $rules = [
-            ['nodeName', 'required', 'on' => ['create', 'move', 'update']],
+            ['nodeName', 'required', 'on' => ['create', 'update']],
             ['nodeParent', 'required', 'on' => ['create']],
             ['related', 'required', 'on' => ['create', 'move']],
             ['insertPosition', 'required', 'on' => ['create', 'move']],

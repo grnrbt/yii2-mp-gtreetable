@@ -1,12 +1,13 @@
 <?php
 
 /**
- * @link https://github.com/gilek/yii2-gtreetable
+ * @link https://github.com/grnrbt/yii2-mp-gtreetable
+ * @copyright Copyright (c) 2016 Artur Krotov <artur@greenrabbit.ru>
  * @copyright Copyright (c) 2015 Maciej Kłak
- * @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
+ * @license https://github.com/grnrbt/yii2-mp-gtreetable/blob/master/LICENSE
  */
 
-use grnrbt\yii2\gtreetable\Widget;
+use grnrbt\yii2\gtreetable\GTreeTableWidget;
 use grnrbt\yii2\gtreetable\assets\UrlAsset;
 use grnrbt\yii2\gtreetable\assets\BrowserAsset;
 use yii\jui\JuiAsset;
@@ -88,6 +89,12 @@ $defaultOptions = [
     'language' => Yii::$app->language,
 ];
 
+if(isset($link)) {
+    $defaultOptions['onSelect'] = new JsExpression("function (oNode) {
+        window.location.href = '". $link ."' + oNode.getId();
+    }");
+}
+
 $options = !isset($options) ? $defaultOptions : ArrayHelper::merge($defaultOptions, $options);
 if (array_key_exists('draggable', $options) && $options['draggable'] === true) {
     BrowserAsset::register($this);
@@ -95,7 +102,7 @@ if (array_key_exists('draggable', $options) && $options['draggable'] === true) {
 }
 
 $params = [];
-$reflector = new ReflectionClass(Widget::className());
+$reflector = new ReflectionClass(GTreeTableWidget::className());
 foreach ($reflector->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
     $name = $property->name;
 
@@ -103,4 +110,4 @@ foreach ($reflector->getProperties(ReflectionProperty::IS_PUBLIC) as $property) 
         $params[$name] = ${$name};
     }
 }
-echo Widget::widget($params);
+echo GTreeTableWidget::widget($params);

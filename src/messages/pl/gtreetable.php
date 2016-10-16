@@ -3,7 +3,7 @@
 /**
 * @link https://github.com/gilek/yii2-gtreetable
 * @copyright Copyright (c) 2015 Maciej Kłak
-* @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
+* @license https://github.com/grnrbt/yii2-mp-gtreetable/blob/master/LICENSE
 */
 
 return [

@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @link https://github.com/gilek/yii2-gtreetable
+ * @link https://github.com/grnrbt/yii2-mp-gtreetable
+ * @copyright Copyright (c) 2016 Artur Krotov <artur@greenrabbit.ru>
  * @copyright Copyright (c) 2015 Maciej Kłak
- * @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
+ * @license https://github.com/grnrbt/yii2-mp-gtreetable/blob/master/LICENSE
  */
 
 namespace grnrbt\yii2\gtreetable;
@@ -15,7 +16,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\AssetBundle;
 use grnrbt\yii2\gtreetable\assets\Asset;
 
-class Widget extends \yii\base\Widget
+class GTreeTableWidget extends \yii\base\Widget
 {
 
     public $options = [];

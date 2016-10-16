@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @link https://github.com/gilek/yii2-gtreetable
+ * @link https://github.com/grnrbt/yii2-mp-gtreetable
+ * @copyright Copyright (c) 2016 Artur Krotov <artur@greenrabbit.ru>
  * @copyright Copyright (c) 2015 Maciej Kłak
- * @license https://github.com/gilek/yii2-gtreetable/blob/master/LICENSE
+ * @license https://github.com/grnrbt/yii2-mp-gtreetable/blob/master/LICENSE
  */
 
 namespace grnrbt\yii2\gtreetable\actions;
@@ -24,12 +25,12 @@ class NodeMoveAction extends ModifyAction
         $model = $this->getNodeById($id);
         $model->scenario = 'move';
         $model->load(Yii::$app->request->post(), '');
-
+//        var_dump($model->title); die;
         if (!$model->validate()) {
             throw new HttpException(500, current(current($model->getErrors())));
         }
 
-        if (!($model->relatedNode instanceof $this->treeModelName)) {
+        if ($model->nodeParent && !($model->relatedNode instanceof $this->treeModelName)) {
             throw new NotFoundHttpException(Yii::t('gtreetable', 'Position indicated by related ID is not exists!'));
         }
 
@@ -39,7 +40,9 @@ class NodeMoveAction extends ModifyAction
             }
 
             $action = $this->getMoveAction($model);
-            if (!(call_user_func(array($model, $action), $model->relatedNode) && $model->save(false))) {
+            call_user_func(array($model, $action), $model->relatedNode);
+
+            if (!$model->save(false)) {
                 throw new Exception(Yii::t('gtreetable', 'Moving operation `{name}` failed!', ['{name}' => Html::encode((string)$model)]));
             }
 
@@ -61,8 +64,10 @@ class NodeMoveAction extends ModifyAction
     protected function getMoveAction($model)
     {
         if ($model->relatedNode->isRoot() && $model->insertPosition !== TreeBehavior::POSITION_LAST_CHILD) {
-            return 'makeRoot';
-        } else if ($model->insertPosition === TreeBehavior::POSITION_BEFORE) {
+            $model->makeRoot();
+        }
+
+        if ($model->insertPosition === TreeBehavior::POSITION_BEFORE) {
             return 'insertBefore';
         } else if ($model->insertPosition === TreeBehavior::POSITION_AFTER) {
             return 'insertAfter';
